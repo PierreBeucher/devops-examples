@@ -1,0 +1,20 @@
+[[runners]]
+  name = "Docker Daemon Runner"
+  url = "https://gitlab.com/"
+  executor = "docker"
+  # Runner Authentication token (see https://docs.gitlab.com/ee/api/runners.html) 
+  token = ""
+
+  builds_dir = "/builds"
+  cache_dir = "/cache"
+  
+  [runners.docker]
+    # Volumes to mount in containers running CI jobs. Same syntax as the Docker -v flag. 
+    volumes = [
+        # Mount the Docker socket so we can use it in our build
+        "/var/run/docker.sock:/var/run/docker.sock",
+        # Specify builds and cache dir both as global config and as runners.docker volumes
+        # to ensure builds and cache directories are shared across jobs
+        "/cache",
+        "/builds"
+    ]
