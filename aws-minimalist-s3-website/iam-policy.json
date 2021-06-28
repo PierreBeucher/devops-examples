@@ -1,0 +1,49 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "S3List",
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListAllMyBuckets",
+                "route53:ListHostedZones"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "S3",
+            "Effect": "Allow",
+            "Action": [
+                "s3:*"
+            ],
+            "Resource": [
+                "arn:aws:s3:::*.devops.crafteo.io/*",
+                "arn:aws:s3:::*.devops.crafteo.io"
+            ]
+        },
+        {
+            "Sid": "Route53Records",
+            "Effect": "Allow",
+            "Action": [
+                "route53:ChangeResourceRecordSets",
+                "route53:ListResourceRecordSets",
+                "route53:GetChange"
+            ],
+            "Resource": [
+                "arn:aws:route53:::hostedzone/Z022447923VAXAUFPW2F5",
+                "arn:aws:route53:::change/*"
+            ]
+        },
+        {
+            "Sid": "CloudFormation",
+            "Effect": "Allow",
+            "Action": [
+                "cloudformation:*"
+            ],
+            "Resource": [
+                "arn:aws:cloudformation:*:*:stack/minimalist-s3-website/*",
+                "arn:aws:cloudformation:*:*:stack/minimalist-s3-website"
+            ]
+        }
+    ]
+}
