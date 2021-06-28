@@ -1,0 +1,59 @@
+# CloudFormation template deploying a static S3 bucket with custom DNS
+# See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/quickref-s3.html
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  HostedZoneName:
+    Type: String
+  
+  WebsiteFQDN:
+    Type: String
+  
+Resources:
+
+  # Bucket holding static content
+  # Bucket name must match desired domain name
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      # gitlabci-gitops-s3-static-website.devops.crafteo.io
+      BucketName: !Ref WebsiteFQDN
+      AccessControl: PublicRead
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: error.html
+    DeletionPolicy: Retain
+  
+  # Allow world to read bucket objects (i.e grant public access)
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      PolicyDocument:
+        Id: PublicAccessPolicy
+        Version: 2012-10-17
+        Statement:
+          - Sid: PublicReadForGetBucketObjects
+            Effect: Allow
+            Principal: '*'
+            Action: 's3:GetObject'
+            Resource: !Join 
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref S3Bucket
+                - /*
+      Bucket: !Ref S3Bucket
+
+  # DNS record pointing to bucket
+  # Record name using name of S3 bucket (they must match)
+  Route53DNSRecord:
+    Type: AWS::Route53::RecordSetGroup
+    Properties:
+      HostedZoneName: !Ref HostedZoneName
+      RecordSets:
+      - Name: !Ref S3Bucket
+        Type: CNAME
+        TTL: 900
+        # Record like gitlabci-gitops-s3-static-website.devops.crafteo.io.s3-website.eu-west-3.amazonaws.com
+        ResourceRecords:  
+        -  !Join [ '', [ !Ref S3Bucket, '.s3-website.', !Ref "AWS::Region", '.amazonaws.com'] ]
+  
