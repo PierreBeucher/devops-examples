@@ -1,0 +1,1 @@
+See [GitOps implementation using GitLabCI and AWS](https://gitlab.com/crafteo/devops-examples/gitlabci-gitops-s3-static-website) on Crafteo's GitLab account.
