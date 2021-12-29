@@ -1,0 +1,14 @@
+FROM node:12-alpine
+
+RUN npm -g i pnpm
+
+COPY package.json pnpm-lock.yaml /app/
+WORKDIR /app
+
+RUN pnpm i --prefer-offline --ignore-scripts
+
+# Copy remaining files
+COPY . /app
+
+# Setup entrypoint
+ENTRYPOINT ["node", "index.js"]
