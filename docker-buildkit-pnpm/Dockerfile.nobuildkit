@@ -1,14 +1,14 @@
-FROM node:12-alpine
 
-RUN npm -g i pnpm
+FROM node:17-alpine3.14
 
-COPY package.json pnpm-lock.yaml /app/
 WORKDIR /app
 
-RUN pnpm i --prefer-offline --ignore-scripts
+# Copy package.json fles and install dependencies
+# This may take a long time as your project grows
+# Especially if running on CI or ephemeral environment
+COPY package.json package-lock.json /app/
+RUN npm install --frozen-lockfile --only=prod
 
-# Copy remaining files
+# Copy remaining files and setup command
 COPY . /app
-
-# Setup entrypoint
-ENTRYPOINT ["node", "index.js"]
+CMD ["node", "index.js"]
