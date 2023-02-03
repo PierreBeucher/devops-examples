@@ -1,0 +1,4 @@
+HostName sshd
+User docker
+IdentityFile /dockerd_id_rsa
+StrictHostKeyChecking no

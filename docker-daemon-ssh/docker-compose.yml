@@ -1,0 +1,53 @@
+version: "3.9"
+
+services:
+  # SSH server 
+  # See https://hub.docker.com/r/linuxserver/openssh-server
+  sshd:
+    image: linuxserver/openssh-server:amd64-version-9.0_p1-r2
+    environment:
+      # Run as user Docker with these UID/GID
+      # Allowing connection via docker@host
+      PUID: 1000
+      PGID: 1000
+      USER_NAME: docker
+      # Allow access from this SSH key
+      # Also possible to use PUBLIC_KEY_FILE or PUBLIC_KEY_DIR
+      PUBLIC_KEY: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDoqcE6AKVXlirhmMuEWYbWZC3jA7jYzkhRuqDfPzCqS"
+    ports:
+      - 2222:2222
+    networks:
+      - dockerd-ssh-network
+    volumes:
+      - docker-certs-client:/certs/client:ro
+      - $PWD/openssh-init.sh:/custom-cont-init.d/openssh-init.sh:ro
+
+  # Rootless Docker daemon
+  # Reachable from sshd container via tcp://docker:2376
+  # See https://hub.docker.com/_/docker
+  #
+  # Note: 'docker' service  name is important as entrypoint
+  # will generate TLS certificates valid for 'docker' hostname so it must match
+  # the external hostname. Alternatively, use hostname: docker
+  docker:
+    image: docker:23.0.0-dind-rootless
+    privileged: true
+    networks:
+      - dockerd-ssh-network
+    volumes:
+      - docker-data:/var/lib/docker
+      - docker-certs:/certs
+      - docker-certs-client:/certs/client
+
+volumes:
+  # Keep Docker data in volume
+  docker-data:
+
+  # Keep auto-generated Docker TLS certificates in volumes
+  docker-certs:
+  docker-certs-client:
+
+# Let's have our setup in its own network
+networks:
+  dockerd-ssh-network:
+    name: dockerd-ssh-network

@@ -1,0 +1,3 @@
+[submodule "docker-daemon-ssh/test-gitlab-ci"]
+	path = docker-daemon-ssh/test-gitlab-ci
+	url = git@gitlab.com:crafteo/devops-examples/docker-daemon-ssh.git
