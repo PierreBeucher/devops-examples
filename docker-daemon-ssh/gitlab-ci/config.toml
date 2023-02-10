@@ -1,0 +1,26 @@
+# GitLab CI Runner config example using our Docker daemon
+[[runners]]
+  name = "SSH Docker Daemon Runner"
+  url = "https://gitlab.com/"
+  executor = "docker"
+  token = "xxx"
+
+  # Set DOCKER_HOST for all jobs running on this runner
+  # So that docker CLI will always use that host by default
+  # Here pointing to sshd host which is the hostname for SSH Docker daemon
+  # Adapt yo your own config
+  environment = [
+    "DOCKER_HOST=ssh://docker@sshd:2222"
+  ]
+
+  [runners.docker]
+    # Mount global SSH config and private key in job's container
+    # This will allow script to use ssh commands with our SSH Docker daemon without additional config
+    volumes = [
+      "/home/pbeucher/git/devops-examples/docker-daemon-ssh/gitlab-ci/ssh_config:/etc/ssh/ssh_config",
+      "/home/pbeucher/git/devops-examples/docker-daemon-ssh/gitlab-ci/dockerd_id_rsa:/dockerd_id_rsa" 
+    ]
+
+    # For testing purpose only, you probably won't need it
+    # Ensure job's container is in the same network as sshd container
+    network_mode = "dockerd-ssh-network"
