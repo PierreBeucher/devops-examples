@@ -1,0 +1,24 @@
+services:
+  dev-container:
+    build:
+      context: .
+    entrypoint: ["sh", "-c", "/app/entrypoint.sh bash"]
+    volumes:
+    # Mount local AWS credentials
+    - ${HOME}/.aws/config:/root/.aws/config:ro
+    - ${HOME}/.aws/credentials:/root/.aws/credentials:ro
+
+    # Mount project directory
+    - ${PWD}:/app
+
+    # Keep container home as volume to keep history and such
+    - dev-container-home:/root
+    
+    # Shell will drop us in this directory
+    working_dir: /app
+
+    # Use host networking to reduce friction
+    network_mode: host
+
+volumes:
+  dev-container-home:

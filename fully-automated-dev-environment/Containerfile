@@ -1,0 +1,25 @@
+FROM docker.io/hashicorp/terraform:1.5.5 AS terraform
+FROM docker.io/amazon/aws-cli:2.13.9 AS aws
+FROM docker.io/hashicorp/vault:1.14.1 AS vault
+
+# NodeJS base image
+FROM docker.io/library/node:20.5.1-bookworm
+
+# Terraform
+COPY --from=terraform /bin/terraform /bin/terraform
+
+# AWS
+COPY --from=aws /usr/local/aws-cli/ /usr/local/aws-cli/
+COPY --from=aws /usr/local/bin/     /usr/local/bin/
+
+# MySQL 
+RUN apt update && apt install -y default-mysql-client
+
+# Hashicorp Vault
+COPY --from=vault /bin/vault /bin/vault
+
+# Novops
+ARG NOVOPS_VERSION=0.6.0
+RUN curl -L "https://github.com/PierreBeucher/novops/releases/download/v${NOVOPS_VERSION}/novops-X64-Linux.zip" -o novops.zip && \
+    unzip novops.zip && \
+    mv novops /usr/local/bin/novops
