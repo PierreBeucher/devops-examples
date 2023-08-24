@@ -1,0 +1,4 @@
+/bin/
+/node_modules/
+.pulumi-backend
+test-py

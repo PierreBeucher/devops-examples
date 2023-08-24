@@ -1,0 +1,47 @@
+version: "3.7"
+
+services:
+
+  vault:
+    image: docker.io/hashicorp/vault:1.14.1
+    ports:
+    - "127.0.0.1:8200:8200"
+    cap_add: [IPC_LOCK] 
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: rootToken
+    healthcheck:
+      test: ["CMD", "apk", "add", "curl", "&&", "curl", "http://localhost:8200/.health"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
+      start_period: 3s
+
+  # LocalStack is an AWS emulator
+  localstack:
+    image: docker.io/localstack/localstack:latest
+    ports:
+      - "127.0.0.1:4566:4566"            # LocalStack Gateway
+      - "127.0.0.1:4510-4559:4510-4559"  # external services port range
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - localstack-data:/var/lib/localstack
+      - /var/run/docker.sock:/var/run/docker.sock    
+
+  # Run afer Vault startup to initialize secrets
+  vault-set-secrets:
+    image: docker.io/hashicorp/vault:1.14.1
+    network_mode: host
+    environment:
+      VAULT_TOKEN: rootToken
+      VAULT_ADDR: http://localhost:8200 
+    volumes:
+      - ./set-secret.sh:/set-secret.sh
+    depends_on:
+      vault:
+        condition: service_healthy
+    entrypoint: /set-secret.sh
+
+volumes:
+  localstack-data:
+  mysql-data: 

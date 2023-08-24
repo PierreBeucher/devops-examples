@@ -1,0 +1,48 @@
+environments:
+  dev:
+    variables:
+
+      # .env equivalent of PULUMI_STACK=dev
+      - name: PULUMI_STACK
+        value: dev
+
+      # Secret env var fetched from Hashicorp Vault
+      - name: PULUMI_CONFIG_PASSPHRASE
+        value:
+          hvault_kv2:
+            path: app/dev
+            key: pulumi_passphrase
+
+    files:
+      # Fetch secret and set variable APP_SSH_KEY pointing to file
+      - variable: APP_SSH_KEY
+        content:
+          hvault_kv2:
+            path: app/dev
+            key: ssh_key
+
+    # Temporary credentials for IAM Role. Generate variables:
+    # AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY & AWS_SESSION_TOKEN
+    aws:
+      assume_role:
+        role_arn: arn:aws:iam::010562097198:role/novops_deploy_DEV
+
+  # Same as dev for prod
+  prod:
+    variables:
+      - name: PULUMI_STACK
+        value: prod
+
+      - name: PULUMI_CONFIG_PASSPHRASE
+        value:
+          hvault_kv2:
+            path: app/prod
+            key: pulumi_passphrase
+
+    aws:
+      assume_role:
+        role_arn: arn:aws:iam::010562097198:role/novops_deploy_PROD
+
+config:
+  default:
+    environment: dev
