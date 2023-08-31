@@ -68,8 +68,8 @@ Run development environment in container:
 
 ```sh
 # Docker
-docker-compose -f docker-compose.dev-container.yml build                # Build image
-docker-compose -f docker-compose.dev-container.yml run dev-container    # Run development shell
+docker compose -f docker-compose.dev-container.yml build                # Build image
+docker compose -f docker-compose.dev-container.yml run dev-container    # Run development shell
 
 # Podman
 podman-compose -f docker-compose.dev-container.yml build                # Build image
