@@ -1,12 +1,19 @@
 services:
   dev-container:
     build:
+      dockerfile: Containerfile
       context: .
-    entrypoint: ["sh", "-c", "/app/entrypoint.sh bash"]
+    entrypoint: ["sh", "-c"]
+    command: bash
+    # Expose ports so that running app in container is reachable from host
+    ports:
+      - 3000:3000
+    
+    # Mount source code and credentials in container
     volumes:
     # Mount local AWS credentials
-    - ${HOME}/.aws/config:/root/.aws/config:ro
-    - ${HOME}/.aws/credentials:/root/.aws/credentials:ro
+    # - ${HOME}/.aws/config:/root/.aws/config:ro
+    # - ${HOME}/.aws/credentials:/root/.aws/credentials:ro
 
     # Mount project directory
     - ${PWD}:/app

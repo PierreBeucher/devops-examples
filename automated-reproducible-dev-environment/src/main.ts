@@ -5,4 +5,4 @@
 import * as app from './app'
 
 app.startServer()
-app.connectMysql()
+// app.connectMysql()

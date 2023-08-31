@@ -10,7 +10,6 @@
     flake-utils.lib.eachDefaultSystem (system:
         let 
             pkgs = nixpkgs.legacyPackages.${system};
-            novopsPackage = novops.packages.${system}.novops; 
         in {
             devShells = {
                 default = pkgs.mkShell {
@@ -25,9 +24,6 @@
                         # Docker alternative
                         pkgs.podman
                         pkgs.podman-compose
-
-                        pkgs.vault
-                        novopsPackage # Include Novops package in your shell
                     ];
                     
                     shellHook = ''
