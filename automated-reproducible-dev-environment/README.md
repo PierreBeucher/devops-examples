@@ -2,7 +2,7 @@
 
 Run a fully ready development environment in a single command for reproducibility, efficiency, fast onboarding of new developers. 
 
-This example showcases setup described in my [Automated, reproducible and secure development/CI environments](TODO URL) blog post series. 
+This example showcases setup described in my [Automated, reproducible and secure development/CI environments](https://blog.crafteo.io/2023/08/31/automated-reproducible-and-secure-development-ci-environments-package-management-1-3/) blog post series. 
 
 Context: you're a developer working on a project including
 - Typescript (NodeJS) application
