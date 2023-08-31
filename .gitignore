@@ -1,1 +1,3 @@
 docker-daemon-ssh/gitlab-ci/.token
+**/node_modules
+**/.pulumi-backend

@@ -1,0 +1,5 @@
+node_modules
+sops/secrets.yml
+src/*.js
+tests/*.js
+.envrc

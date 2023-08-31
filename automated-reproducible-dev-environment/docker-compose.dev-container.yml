@@ -1,0 +1,31 @@
+services:
+  dev-container:
+    build:
+      dockerfile: Containerfile
+      context: .
+    entrypoint: ["sh", "-c"]
+    command: bash
+    # Expose ports so that running app in container is reachable from host
+    ports:
+      - 3000:3000
+    
+    # Mount source code and credentials in container
+    volumes:
+    # Mount local AWS credentials
+    # - ${HOME}/.aws/config:/root/.aws/config:ro
+    # - ${HOME}/.aws/credentials:/root/.aws/credentials:ro
+
+    # Mount project directory
+    - ${PWD}:/app
+
+    # Keep container home as volume to keep history and such
+    - dev-container-home:/root
+    
+    # Shell will drop us in this directory
+    working_dir: /app
+
+    # Use host networking to reduce friction
+    network_mode: host
+
+volumes:
+  dev-container-home:
